@@ -1,9 +1,19 @@
 from flask import Flask
 from flask import request
+# from flask_sqlalchemy import SQLAlchemy
+from config import app_config, app_active
 
-app = Flask(__name__)
+config = app_config[app_active]
 
-@app.route('/')
-def index():
-	user_agent = request.headers.get('User-Agent')
-	return '<p>Your browser is {}</p>'.format(user_agent)
+def create_app(config_name):
+	app = Flask(__name__)
+
+	app.config.from_object(app_config[config_name])
+	app.config.from_pyfile('config.py')
+
+	@app.route('/')
+	def index():
+		user_agent = request.headers.get('User-Agent')
+		return f'<p>Your browser is {user_agent}</p>'
+
+	return app
